@@ -1,0 +1,7 @@
+Gyro_l3g4200.c:2:9:readDeviceName	48	static
+Gyro_l3g4200.c:8:9:readControlRegister1	48	static
+Gyro_l3g4200.c:15:9:readControlRegister2	48	static
+Gyro_l3g4200.c:21:9:readControlRegister3	48	static
+Gyro_l3g4200.c:27:9:readControlRegister4	48	static
+Gyro_l3g4200.c:33:9:readControlRegister5	48	static
+Gyro_l3g4200.c:41:6:setDeviceMode	16	static
