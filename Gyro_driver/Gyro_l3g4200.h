@@ -8,7 +8,7 @@
 #ifndef __GYRO_L3G4200_H__
 #define __GYRO_L3G4200_H__
 
-#define DIVICE_I2C_ADR							0x69 // when SDO is connected to power supply, 0x68 in case of this pin connect to ground
+#define DEVICE_I2C_ADR							0x69 // when SDO is connected to power supply, 0x68 in case of this pin connect to ground
 #define DEVICE_NAME								0x0F
 #define DEVICE_MODE_SHUTDOWN 					0x00
 #define DEVICE_MODE_SLEEP						0x00
@@ -66,7 +66,9 @@ void setDeviceIntoModeShutdown(void);
 void setWatermarkLevel(uint8_t _levelInput);
 
 //buffer controlling
-void setBuffferMode(enum bufferOperationMode _setBufferMode);
+void setFIFOEnable(I2C_HandleTypeDef *_hi2c_config);
+void setBuffferMode(enum bufferOperationMode _setBufferMode,
+					I2C_HandleTypeDef *_hi2c_config);
 void setBufferModeBypass(void);
 void setBufferModeFifo(void);
 void setBufferModeStream(void);
@@ -74,6 +76,9 @@ void setBufferModeBypass_2_Stream(void);
 void setBufferModeStream_2_Fifo(void);
 uint8_t readFifoControlReg(void);
 uint8_t readFifoSourceReg(void);
+
+//Temperature
+uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config);
 
 
 #endif

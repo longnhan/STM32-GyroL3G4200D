@@ -94,7 +94,7 @@ void toggleOnboardLED(void *argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 //global variable
-uint8_t bufferData[2];
+uint8_t bufferData[10];
 /* USER CODE END 0 */
 
 /**
@@ -177,17 +177,25 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  //choose device mode from enum
+  enum deviceOperationMode setDeviceIntoMode = Device_Mode_Normal;
+  //choose buffer mode from enum
+  enum bufferOperationMode setBufferMode = Buffer_Mode_Bypass;
+  //set device mode
+  setDeviceMode(setDeviceIntoMode, &hi2c1);
+  //set buffer mode
+  setBuffferMode(setBufferMode, &hi2c1);
+  //enable buffer
+  setFIFOEnable(&hi2c1);
+  uint8_t abc=0;
   while (1)
   {
-	  //choose device mode from enum
-	  enum deviceOperationMode setDeviceIntoMode = Device_Mode_Sleep;
-	  //choose buffer mode from enum
-	  enum bufferOperationMode setBufferMode = Buffer_Mode_Bypass;
-	  //set device mode
-	  setDeviceMode(setDeviceIntoMode, &hi2c1);
-
 	  bufferData[0]=readDeviceName(&hi2c1);
-	  HAL_Delay(1000);
+	  HAL_Delay(500);
+	  bufferData[1]=readControlRegister1(&hi2c1);
+	  HAL_Delay(500);
+	  bufferData[2]=readOutputTemperature(&hi2c1);
+	  HAL_Delay(500);
 
     /* USER CODE END WHILE */
 
