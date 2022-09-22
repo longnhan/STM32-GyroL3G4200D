@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "Gyro_l3g4200.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -178,6 +179,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  //choose device mode from enum
+	  enum deviceOperationMode setDeviceIntoMode = Device_Mode_Sleep;
+	  //choose buffer mode from enum
+	  enum bufferOperationMode setBufferMode = Buffer_Mode_Bypass;
+	  //set device mode
+	  setDeviceMode(setDeviceIntoMode, &hi2c1);
+
 	  bufferData[0]=readDeviceName(&hi2c1);
 	  HAL_Delay(1000);
 

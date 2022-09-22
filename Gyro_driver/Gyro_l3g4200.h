@@ -35,9 +35,18 @@
 
 enum deviceOperationMode
 {
-	Mode_Normal,
-	Mode_Sleep,
-	Mode_Shutdown
+	Device_Mode_Normal,
+	Device_Mode_Sleep,
+	Device_Mode_Shutdown
+};
+
+enum bufferOperationMode
+{
+	Buffer_Mode_Bypass,
+	Buffer_Mode_FIFO,
+	Buffer_Mode_Stream,
+	Buffer_Mode_Bypass_2_Stream,
+	Stream_2_FIFO
 };
 
 //function to control device
@@ -50,13 +59,14 @@ uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readReference(void);
 
 //mode operation
-void setDeviceMode(enum deviceOperationMode setDeviceMode);
+void setDeviceMode(enum deviceOperationMode _setDeviceMode,
+					I2C_HandleTypeDef *_hi2c_config);
 void setDeviceIntoModeSleep(void);
 void setDeviceIntoModeShutdown(void);
 void setWatermarkLevel(uint8_t _levelInput);
 
 //buffer controlling
-void setBuffferMode(uint8_t _bufferMode);
+void setBuffferMode(enum bufferOperationMode _setBufferMode);
 void setBufferModeBypass(void);
 void setBufferModeFifo(void);
 void setBufferModeStream(void);
