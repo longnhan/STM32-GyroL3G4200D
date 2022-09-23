@@ -95,6 +95,9 @@ void toggleOnboardLED(void *argument);
 /* USER CODE BEGIN 0 */
 //global variable
 uint8_t bufferData[10]={};
+uint16_t rollAxisData=0;
+uint16_t pitchAxisData=0;
+uint16_t yawAxisSData=0;
 /* USER CODE END 0 */
 
 /**
@@ -172,7 +175,7 @@ int main(void)
   //choose device mode from enum
   enum deviceOperationMode setDeviceIntoMode = Device_Mode_Normal;
   //choose buffer mode from enum
-  enum bufferOperationMode setBufferMode = Buffer_Mode_FIFO;
+  enum bufferOperationMode setBufferMode = Buffer_Mode_Bypass;
   //set device mode
   setDeviceMode(setDeviceIntoMode, &hi2c1);
   //set buffer mode
@@ -397,6 +400,12 @@ void readGyroValue(void *argument)
 	  bufferData[2]=readOutputTemperature(&hi2c1);
 	  osDelay(100);
 	  bufferData[3]=readRegister(&hi2c1, DEVICE_FIFO_CTRL_REG, 1);
+	  osDelay(100);
+	  bufferData[4]=isFIFOstoreFull(&hi2c1);
+	  osDelay(100);
+	  bufferData[5]=isFIFOstoreEmpty(&hi2c1);
+	  osDelay(100);
+	  rollAxisData = readRollValue(&hi2c1);
 	  osDelay(100);
   }
   /* USER CODE END readGyroValue */

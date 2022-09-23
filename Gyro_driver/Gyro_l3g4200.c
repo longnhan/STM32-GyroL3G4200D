@@ -81,9 +81,20 @@ uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config)
 	return _pData[0];
 }
 
-uint8_t readReference(void)
+/**
+ * ZYXOR	|	ZOR	|	YOR	|	XOR	|	ZYXDA	|	ZDA	|	YDA	|	XDA	|
+ */
+uint8_t readStatusRegister(I2C_HandleTypeDef *_hi2c_config)
 {
-
+	uint8_t _pData[1]={};
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_STATUS_REG,
+			I2C_MEMADD_SIZE_8BIT,
+			_pData,
+			1,
+			0xFF);
+	return _pData[0];
 }
 
 void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_hi2c_config)
@@ -212,6 +223,22 @@ void setBufferModeStream_2_Fifo(void)
 
 }
 
+uint8_t isFIFOstoreFull(I2C_HandleTypeDef *_hi2c_config)
+{
+	uint8_t _indicateBit=0;
+	uint8_t _readData=0;
+	_readData=readRegister(_hi2c_config, DEVICE_FIFO_SRC_REG, 1);
+	_indicateBit = (_readData & 0b01000000)>>6;
+	return _indicateBit;
+}
+uint8_t isFIFOstoreEmpty(I2C_HandleTypeDef *_hi2c_config)
+{
+	uint8_t _indicateBit=0;
+	uint8_t _readData=0;
+	_readData=readRegister(_hi2c_config, DEVICE_FIFO_SRC_REG, 1);
+	_indicateBit = (_readData & 0b00100000)>>5;
+	return _indicateBit;
+}
 uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config)
 {
 	uint8_t _pData[1];
@@ -222,4 +249,37 @@ uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config)
 			_pData, 1,
 			0xFF);
 	return _pData[0];
+}
+
+//Y axis
+uint16_t readRollValue(I2C_HandleTypeDef *_hi2c_config)
+{
+	uint8_t _bitDataAvailable=0;
+	uint8_t _bitDataOverrun=0;
+	uint8_t _upperData=0;
+	uint8_t _lowerData=0;
+	uint16_t _rollValue=0;
+	//check if Y-axis data is available
+	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x2) >> 1;
+	// check when overrun occurs
+	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x20) >>5;
+	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
+	{
+		_upperData = readRegister(_hi2c_config, DEVICE_OUT_Y_H_REG, 1);
+		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_Y_L_REG, 1);
+		//data proccessing
+		_rollValue = ((uint16_t)_upperData << 8) | (uint16_t)_lowerData;
+
+	}
+	return _rollValue;
+}
+//X axis
+uint16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config)
+{
+	return 0;
+}
+//Z axis
+uint16_t readYawValue(I2C_HandleTypeDef *_hi2c_config)
+{
+	return 0;
 }

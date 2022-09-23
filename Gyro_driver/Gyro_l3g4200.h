@@ -9,8 +9,7 @@
 #define __GYRO_L3G4200_H__
 
 #define DEVICE_I2C_ADR							0xD2
-#define DEVICE_I2C_ADR_READ						0xD3 // when SDO is connected to power supply, 0x68 in case of this pin connect to ground
-#define DEVICE_I2C_ADR_WRITE					0xD2
+
 #define DEVICE_NAME								0x0F
 #define DEVICE_MODE_SHUTDOWN 					0x00
 #define DEVICE_MODE_SLEEP						0x00
@@ -21,11 +20,9 @@
 #define DEVICE_CTRL_REG_4						0x23
 #define DEVICE_CTRL_REG_5						0x24
 #define	DEVICE_REFERENCE						0x25
-
 #define DEVICE_OUT_TEMP							0x26
+#define DEVICE_STATUS_REG						0x27
 //FIFO register configuration
-//watermark is used to set an specific level of full data and trigger an interupt
-//default maximum watermark level
 #define 	DEVICE_FIFO_CTRL_REG				0x2E
 #define		DEVICE_FIFO_SRC_REG					0x2F
 
@@ -34,6 +31,13 @@
 #define 	DEVICE_FIFO_MODE_STREAM				0x0101111
 #define 	DEVICE_FIFO_MODE_STREAM_TO_FF		0x0111111
 #define 	DEVICE_FIFO_MODE_BYPASS_TO_STREAM 	0x04
+// 3 axises
+#define		DEVICE_OUT_X_L_REG				0x28
+#define		DEVICE_OUT_X_H_REG				0x29
+#define		DEVICE_OUT_Y_L_REG				0x2A
+#define		DEVICE_OUT_Y_H_REG				0x2B
+#define		DEVICE_OUT_Z_L_REG				0x2C
+#define		DEVICE_OUT_Z_H_REG				0x2D
 
 enum deviceOperationMode
 {
@@ -60,6 +64,7 @@ uint8_t readControlRegister2(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister3(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister4(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config);
+uint8_t readStatusRegister(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readReference(void);
 
 //mode operation
@@ -81,11 +86,16 @@ void setBufferModeBypass_2_Stream(void);
 void setBufferModeStream_2_Fifo(void);
 uint8_t readFifoControlReg(void);
 uint8_t readFifoSourceReg(void);
-uint8_t isFIFOstoreFull(void);
-uint8_t isFIFOstoreEmpty(void);
+uint8_t isFIFOstoreFull(I2C_HandleTypeDef *_hi2c_config);
+uint8_t isFIFOstoreEmpty(I2C_HandleTypeDef *_hi2c_config);
 
 //Temperature
 uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config);
+
+//Read 3 axises roll - pitch - yaw
+uint16_t readRollValue(I2C_HandleTypeDef *_hi2c_config);
+uint16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config);
+uint16_t readYawValue(I2C_HandleTypeDef *_hi2c_config);
 
 
 #endif
