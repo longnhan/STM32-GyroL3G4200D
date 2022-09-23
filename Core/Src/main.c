@@ -172,14 +172,13 @@ int main(void)
   //choose device mode from enum
   enum deviceOperationMode setDeviceIntoMode = Device_Mode_Normal;
   //choose buffer mode from enum
-  enum bufferOperationMode setBufferMode = Buffer_Mode_Bypass;
+  enum bufferOperationMode setBufferMode = Buffer_Mode_FIFO;
   //set device mode
   setDeviceMode(setDeviceIntoMode, &hi2c1);
-
-//  //set buffer mode
-//  setBuffferMode(setBufferMode, &hi2c1);
-//  //enable buffer
-//  setFIFOEnable(&hi2c1);
+  //set buffer mode
+  setBuffferMode(setBufferMode, &hi2c1);
+  //enable buffer
+  setFIFOEnable(&hi2c1);
   /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
@@ -191,10 +190,6 @@ int main(void)
 
   while (1)
   {
-	  bufferData[0]=readDeviceName(&hi2c1);
-	  bufferData[1]=readControlRegister1(&hi2c1);
-	  bufferData[2]=readOutputTemperature(&hi2c1);
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -396,11 +391,13 @@ void readGyroValue(void *argument)
   for(;;)
   {
 	  bufferData[0]=readDeviceName(&hi2c1);
-	  osDelay(200);
+	  osDelay(100);
 	  bufferData[1]=readControlRegister1(&hi2c1);
-	  osDelay(200);
+	  osDelay(100);
 	  bufferData[2]=readOutputTemperature(&hi2c1);
-	  osDelay(200);
+	  osDelay(100);
+	  bufferData[3]=readRegister(&hi2c1, DEVICE_FIFO_CTRL_REG, 1);
+	  osDelay(100);
   }
   /* USER CODE END readGyroValue */
 }

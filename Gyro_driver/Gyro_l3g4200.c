@@ -12,6 +12,35 @@ uint8_t readDeviceName(I2C_HandleTypeDef *_hi2c_config)
 	return _pData[0];
 }
 
+uint16_t readRegister(I2C_HandleTypeDef *_hi2c_config,
+						uint8_t regAddr,
+						uint8_t num)
+{
+	uint16_t _pdata=0;
+	switch(num)
+	{
+	case 1:
+		HAL_I2C_Mem_Read(_hi2c_config,
+						DEVICE_I2C_ADR,
+						regAddr,
+						I2C_MEMADD_SIZE_8BIT,
+						&_pdata,
+						1,
+						0xFF);
+		break;
+	case 2:
+		HAL_I2C_Mem_Read(_hi2c_config,
+						DEVICE_I2C_ADR,
+						regAddr,
+						I2C_MEMADD_SIZE_16BIT,
+						&_pdata,
+						2,
+						0xFF);
+		break;
+	}
+	return _pdata;
+}
+
 /**
  * Control Register 1
  * DR1	|	DR0	|	BW1	|	BW0	|	PD	|	ZEN	|	YEN	|	XEN

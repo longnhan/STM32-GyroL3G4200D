@@ -53,6 +53,8 @@ enum bufferOperationMode
 
 //function to control device
 uint8_t readDeviceName(I2C_HandleTypeDef *_hi2c_config);
+uint16_t readRegister(I2C_HandleTypeDef *_hi2c_config,
+						uint8_t regAddr, uint8_t num);
 uint8_t readControlRegister1(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister2(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister3(I2C_HandleTypeDef *_hi2c_config);
@@ -79,6 +81,8 @@ void setBufferModeBypass_2_Stream(void);
 void setBufferModeStream_2_Fifo(void);
 uint8_t readFifoControlReg(void);
 uint8_t readFifoSourceReg(void);
+uint8_t isFIFOstoreFull(void);
+uint8_t isFIFOstoreEmpty(void);
 
 //Temperature
 uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config);
