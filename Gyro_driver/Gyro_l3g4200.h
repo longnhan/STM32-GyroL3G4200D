@@ -8,7 +8,9 @@
 #ifndef __GYRO_L3G4200_H__
 #define __GYRO_L3G4200_H__
 
-#define DEVICE_I2C_ADR							0x69 // when SDO is connected to power supply, 0x68 in case of this pin connect to ground
+#define DEVICE_I2C_ADR							0xD2
+#define DEVICE_I2C_ADR_READ						0xD3 // when SDO is connected to power supply, 0x68 in case of this pin connect to ground
+#define DEVICE_I2C_ADR_WRITE					0xD2
 #define DEVICE_NAME								0x0F
 #define DEVICE_MODE_SHUTDOWN 					0x00
 #define DEVICE_MODE_SLEEP						0x00
@@ -61,6 +63,7 @@ uint8_t readReference(void);
 //mode operation
 void setDeviceMode(enum deviceOperationMode _setDeviceMode,
 					I2C_HandleTypeDef *_hi2c_config);
+void setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config);
 void setDeviceIntoModeSleep(void);
 void setDeviceIntoModeShutdown(void);
 void setWatermarkLevel(uint8_t _levelInput);

@@ -1,8 +1,14 @@
 #include "Gyro_l3g4200.h"
 uint8_t readDeviceName(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1];
-	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_NAME, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
+	uint8_t _pData[1]={};
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_NAME,
+			I2C_MEMADD_SIZE_8BIT,
+			_pData,
+			1,
+			0xFF);
 	return _pData[0];
 }
 
@@ -16,32 +22,32 @@ uint8_t readDeviceName(I2C_HandleTypeDef *_hi2c_config)
  */
 uint8_t readControlRegister1(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1];
+	uint8_t _pData[1]={};
 	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_1, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
 	return _pData[0];
 
 }
 uint8_t readControlRegister2(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1];
+	uint8_t _pData[1]={};
 	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_2, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
 	return _pData[0];
 }
 uint8_t readControlRegister3(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1];
+	uint8_t _pData[1]={};
 	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_3, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
 	return _pData[0];
 }
 uint8_t readControlRegister4(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1];
+	uint8_t _pData[1]={};
 	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_4, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
 	return _pData[0];
 }
 uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1];
+	uint8_t _pData[1]={};
 	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_5, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
 	return _pData[0];
 }
@@ -56,6 +62,7 @@ void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_
 	uint8_t readCtrlReg1=readControlRegister1(_hi2c_config);
 	uint8_t sendCtrlReg1=0;
 	uint8_t _pdBit= (readCtrlReg1 >> 3) & 0x1;
+	//setup information to be sent
 	switch (_setDeviceMode)
 	{
 	case Device_Mode_Normal:
@@ -81,6 +88,7 @@ void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_
 	case Device_Mode_Shutdown:
 		sendCtrlReg1 = readCtrlReg1 & 0b11110111;
 		break;
+
 		HAL_I2C_Mem_Write(_hi2c_config,
 						DEVICE_I2C_ADR,
 						DEVICE_CTRL_REG_1,
@@ -88,11 +96,27 @@ void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_
 						&sendCtrlReg1,
 						1,
 						0xFF);
+		//at least device needed 250ms to change from shutdown to normal mode
+		HAL_Delay(300);
 	}
 }
-void setWatermarkLevel(uint8_t _levelInput);
+
+void setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config)
+{
+	uint8_t _pData=0x0F;
+	HAL_I2C_Mem_Write(_hi2c_config,
+						DEVICE_I2C_ADR,
+						DEVICE_CTRL_REG_1,
+						I2C_MEMADD_SIZE_8BIT,
+						&_pData,
+						1,
+						0xFF);
+	HAL_Delay(300);
+}
+
 void setDeviceIntoModeSleep(void);
 void setDeviceIntoModeShutdown(void);
+void setWatermarkLevel(uint8_t _levelInput);
 
 //buffer controlling
 void setFIFOEnable(I2C_HandleTypeDef *_hi2c_config)
