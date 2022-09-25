@@ -18,12 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
-#include "Gyro_l3g4200.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Gyro_l3g4200.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,34 +43,6 @@ I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart2;
 
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
-};
-/* Definitions for read_I2C */
-osThreadId_t read_I2CHandle;
-const osThreadAttr_t read_I2C_attributes = {
-  .name = "read_I2C",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
-};
-/* Definitions for send_UART */
-osThreadId_t send_UARTHandle;
-const osThreadAttr_t send_UART_attributes = {
-  .name = "send_UART",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
-};
-/* Definitions for toggleLED */
-osThreadId_t toggleLEDHandle;
-const osThreadAttr_t toggleLED_attributes = {
-  .name = "toggleLED",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
-};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -82,11 +52,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
-void StartDefaultTask(void *argument);
-void readGyroValue(void *argument);
-void sendUARTValue(void *argument);
-void toggleOnboardLED(void *argument);
-
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -107,7 +72,6 @@ uint16_t yawAxisSData=0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -134,44 +98,8 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-
-  /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* creation of read_I2C */
-  read_I2CHandle = osThreadNew(readGyroValue, NULL, &read_I2C_attributes);
-
-  /* creation of send_UART */
-  send_UARTHandle = osThreadNew(sendUARTValue, NULL, &send_UART_attributes);
-
-  /* creation of toggleLED */
-  toggleLEDHandle = osThreadNew(toggleOnboardLED, NULL, &toggleLED_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   //choose device mode from enum
   enum deviceOperationMode setDeviceIntoMode = Device_Mode_Normal;
   //choose buffer mode from enum
@@ -182,17 +110,23 @@ int main(void)
   setBuffferMode(setBufferMode, &hi2c1);
   //enable buffer
   setFIFOEnable(&hi2c1);
-  /* USER CODE END RTOS_EVENTS */
-
-  /* Start scheduler */
-  osKernelStart();
-
-  /* We should never get here as control is now taken by the scheduler */
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
 
   while (1)
   {
+	  bufferData[0]=readDeviceName(&hi2c1);
+	  HAL_Delay(10);
+	  bufferData[1]=readControlRegister1(&hi2c1);
+	  HAL_Delay(10);
+	  bufferData[2]=readOutputTemperature(&hi2c1);
+	  HAL_Delay(10);
+	  bufferData[3]=readRegister(&hi2c1, DEVICE_FIFO_CTRL_REG);
+	  HAL_Delay(10);
+	  bufferData[4]=isFIFOstoreFull(&hi2c1);
+	  HAL_Delay(10);
+	  bufferData[5]=isFIFOstoreEmpty(&hi2c1);
+	  HAL_Delay(10);
+	  rollAxisData = readRollValue(&hi2c1);
+	  HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -361,92 +295,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/* USER CODE BEGIN Header_StartDefaultTask */
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
-{
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_readGyroValue */
-/**
-* @brief Function implementing the read_I2C thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_readGyroValue */
-void readGyroValue(void *argument)
-{
-  /* USER CODE BEGIN readGyroValue */
-  /* Infinite loop */
-  for(;;)
-  {
-	  bufferData[0]=readDeviceName(&hi2c1);
-	  osDelay(100);
-	  bufferData[1]=readControlRegister1(&hi2c1);
-	  osDelay(100);
-	  bufferData[2]=readOutputTemperature(&hi2c1);
-	  osDelay(100);
-	  bufferData[3]=readRegister(&hi2c1, DEVICE_FIFO_CTRL_REG, 1);
-	  osDelay(100);
-	  bufferData[4]=isFIFOstoreFull(&hi2c1);
-	  osDelay(100);
-	  bufferData[5]=isFIFOstoreEmpty(&hi2c1);
-	  osDelay(100);
-	  rollAxisData = readRollValue(&hi2c1);
-	  osDelay(100);
-  }
-  /* USER CODE END readGyroValue */
-}
-
-/* USER CODE BEGIN Header_sendUARTValue */
-/**
-* @brief Function implementing the sendUART thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_sendUARTValue */
-void sendUARTValue(void *argument)
-{
-  /* USER CODE BEGIN sendUARTValue */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END sendUARTValue */
-}
-
-/* USER CODE BEGIN Header_toggleOnboardLED */
-/**
-* @brief Function implementing the toggleLED thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_toggleOnboardLED */
-void toggleOnboardLED(void *argument)
-{
-  /* USER CODE BEGIN toggleOnboardLED */
-  /* Infinite loop */
-  for(;;)
-  {
-	  HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
-	  osDelay(500);
-  }
-  /* USER CODE END toggleOnboardLED */
-}
 
 /**
   * @brief  Period elapsed callback in non blocking mode

@@ -38,7 +38,7 @@
 #define		DEVICE_OUT_Y_H_REG				0x2B
 #define		DEVICE_OUT_Z_L_REG				0x2C
 #define		DEVICE_OUT_Z_H_REG				0x2D
-
+I2C_HandleTypeDef *_hi2c_config;
 enum deviceOperationMode
 {
 	Device_Mode_Normal,
@@ -57,8 +57,8 @@ enum bufferOperationMode
 
 //function to control device
 uint8_t readDeviceName(I2C_HandleTypeDef *_hi2c_config);
-uint16_t readRegister(I2C_HandleTypeDef *_hi2c_config,
-						uint8_t regAddr, uint8_t num);
+uint8_t readRegister(I2C_HandleTypeDef *_hi2c_config,
+						uint8_t regAddr);
 uint8_t readControlRegister1(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister2(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readControlRegister3(I2C_HandleTypeDef *_hi2c_config);

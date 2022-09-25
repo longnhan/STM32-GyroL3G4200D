@@ -1,43 +1,28 @@
 #include "Gyro_l3g4200.h"
 uint8_t readDeviceName(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1]={};
+	uint8_t _pData=0;;
 	HAL_I2C_Mem_Read(_hi2c_config,
 			DEVICE_I2C_ADR,
 			DEVICE_NAME,
 			I2C_MEMADD_SIZE_8BIT,
-			_pData,
+			&_pData,
 			1,
 			0xFF);
-	return _pData[0];
+	return _pData;
 }
 
-uint16_t readRegister(I2C_HandleTypeDef *_hi2c_config,
-						uint8_t regAddr,
-						uint8_t num)
+uint8_t readRegister(I2C_HandleTypeDef *_hi2c_config,
+						uint8_t regAddr)
 {
-	uint16_t _pdata=0;
-	switch(num)
-	{
-	case 1:
-		HAL_I2C_Mem_Read(_hi2c_config,
-						DEVICE_I2C_ADR,
-						regAddr,
-						I2C_MEMADD_SIZE_8BIT,
-						&_pdata,
-						1,
-						0xFF);
-		break;
-	case 2:
-		HAL_I2C_Mem_Read(_hi2c_config,
-						DEVICE_I2C_ADR,
-						regAddr,
-						I2C_MEMADD_SIZE_16BIT,
-						&_pdata,
-						2,
-						0xFF);
-		break;
-	}
+	uint8_t _pdata=0;
+	HAL_I2C_Mem_Read(_hi2c_config,
+					DEVICE_I2C_ADR,
+					regAddr,
+					I2C_MEMADD_SIZE_8BIT,
+					&_pdata,
+					1,
+					0xFF);
 	return _pdata;
 }
 
@@ -51,10 +36,15 @@ uint16_t readRegister(I2C_HandleTypeDef *_hi2c_config,
  */
 uint8_t readControlRegister1(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1]={};
-	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_1, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
-	return _pData[0];
-
+	uint8_t _pData=0;
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_CTRL_REG_1,
+			I2C_MEMADD_SIZE_8BIT,
+			&_pData,
+			1,
+			0xFF);
+	return _pData;
 }
 uint8_t readControlRegister2(I2C_HandleTypeDef *_hi2c_config)
 {
@@ -108,7 +98,7 @@ void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_
 	case Device_Mode_Normal:
 		if(_pdBit == 0)
 		{
-			sendCtrlReg1 = readCtrlReg1 | 0b00001000;
+			sendCtrlReg1 = readCtrlReg1 | 0b00001001;
 		}
 		else
 		{
@@ -137,7 +127,9 @@ void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_
 						1,
 						0xFF);
 		//at least device needed 250ms to change from shutdown to normal mode
+		//fucntion here to wait for device get into normal mode
 		HAL_Delay(300);
+
 	}
 }
 
@@ -227,7 +219,7 @@ uint8_t isFIFOstoreFull(I2C_HandleTypeDef *_hi2c_config)
 {
 	uint8_t _indicateBit=0;
 	uint8_t _readData=0;
-	_readData=readRegister(_hi2c_config, DEVICE_FIFO_SRC_REG, 1);
+	_readData=readRegister(_hi2c_config, DEVICE_FIFO_SRC_REG);
 	_indicateBit = (_readData & 0b01000000)>>6;
 	return _indicateBit;
 }
@@ -235,7 +227,7 @@ uint8_t isFIFOstoreEmpty(I2C_HandleTypeDef *_hi2c_config)
 {
 	uint8_t _indicateBit=0;
 	uint8_t _readData=0;
-	_readData=readRegister(_hi2c_config, DEVICE_FIFO_SRC_REG, 1);
+	_readData=readRegister(_hi2c_config, DEVICE_FIFO_SRC_REG);
 	_indicateBit = (_readData & 0b00100000)>>5;
 	return _indicateBit;
 }
@@ -265,8 +257,8 @@ uint16_t readRollValue(I2C_HandleTypeDef *_hi2c_config)
 	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x20) >>5;
 	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
 	{
-		_upperData = readRegister(_hi2c_config, DEVICE_OUT_Y_H_REG, 1);
-		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_Y_L_REG, 1);
+		_upperData = readRegister(_hi2c_config, DEVICE_OUT_Y_H_REG);
+		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_Y_L_REG);
 		//data proccessing
 		_rollValue = ((uint16_t)_upperData << 8) | (uint16_t)_lowerData;
 
