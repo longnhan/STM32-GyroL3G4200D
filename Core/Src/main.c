@@ -60,9 +60,9 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN 0 */
 //global variable
 uint8_t bufferData[10]={};
-uint16_t rollAxisData=0;
-uint16_t pitchAxisData=0;
-uint16_t yawAxisSData=0;
+int16_t rollAxisData=0;
+int16_t pitchAxisData=0;
+int16_t yawAxisSData=0;
 /* USER CODE END 0 */
 
 /**
@@ -126,6 +126,10 @@ int main(void)
 	  bufferData[5]=isFIFOstoreEmpty(&hi2c1);
 	  HAL_Delay(10);
 	  rollAxisData = readRollValue(&hi2c1);
+	  HAL_Delay(10);
+	  pitchAxisData = readPitchValue(&hi2c1);
+	  HAL_Delay(10);
+	  yawAxisSData = readYawValue(&hi2c1);
 	  HAL_Delay(10);
     /* USER CODE END WHILE */
 

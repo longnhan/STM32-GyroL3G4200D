@@ -244,13 +244,13 @@ uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config)
 }
 
 //Y axis
-uint16_t readRollValue(I2C_HandleTypeDef *_hi2c_config)
+int16_t readRollValue(I2C_HandleTypeDef *_hi2c_config)
 {
 	uint8_t _bitDataAvailable=0;
 	uint8_t _bitDataOverrun=0;
 	uint8_t _upperData=0;
 	uint8_t _lowerData=0;
-	uint16_t _rollValue=0;
+	int16_t _rollValue=0;
 	//check if Y-axis data is available
 	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x2) >> 1;
 	// check when overrun occurs
@@ -266,12 +266,46 @@ uint16_t readRollValue(I2C_HandleTypeDef *_hi2c_config)
 	return _rollValue;
 }
 //X axis
-uint16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config)
+int16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config)
 {
-	return 0;
+	uint8_t _bitDataAvailable=0;
+	uint8_t _bitDataOverrun=0;
+	uint8_t _upperData=0;
+	uint8_t _lowerData=0;
+	int16_t _pitchValue=0;
+	//check if X-axis data is available
+	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x1);
+	// check when overrun occurs
+	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x10) >>4;
+	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
+	{
+		_upperData = readRegister(_hi2c_config, DEVICE_OUT_X_H_REG);
+		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_X_L_REG);
+		//data proccessing
+		_pitchValue = ((uint16_t)_upperData << 8) | (uint16_t)_lowerData;
+
+	}
+	return _pitchValue;
 }
 //Z axis
-uint16_t readYawValue(I2C_HandleTypeDef *_hi2c_config)
+int16_t readYawValue(I2C_HandleTypeDef *_hi2c_config)
 {
-	return 0;
+	uint8_t _bitDataAvailable=0;
+	uint8_t _bitDataOverrun=0;
+	uint8_t _upperData=0;
+	uint8_t _lowerData=0;
+	int16_t _yawValue=0;
+	//check if X-axis data is available
+	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x4)>>2;
+	// check when overrun occurs
+	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x40) >>6;
+	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
+	{
+		_upperData = readRegister(_hi2c_config, DEVICE_OUT_Z_H_REG);
+		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_Z_L_REG);
+		//data proccessing
+		_yawValue = ((uint16_t)_upperData << 8) | (uint16_t)_lowerData;
+
+	}
+	return _yawValue;
 }

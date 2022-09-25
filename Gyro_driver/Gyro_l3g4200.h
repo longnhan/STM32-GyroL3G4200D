@@ -93,9 +93,9 @@ uint8_t isFIFOstoreEmpty(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readOutputTemperature(I2C_HandleTypeDef *_hi2c_config);
 
 //Read 3 axises roll - pitch - yaw
-uint16_t readRollValue(I2C_HandleTypeDef *_hi2c_config);
-uint16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config);
-uint16_t readYawValue(I2C_HandleTypeDef *_hi2c_config);
+int16_t readRollValue(I2C_HandleTypeDef *_hi2c_config);
+int16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config);
+int16_t readYawValue(I2C_HandleTypeDef *_hi2c_config);
 
 
 #endif
