@@ -32,12 +32,12 @@
 #define 	DEVICE_FIFO_MODE_STREAM_TO_FF		0x0111111
 #define 	DEVICE_FIFO_MODE_BYPASS_TO_STREAM 	0x04
 // 3 axises
-#define		DEVICE_OUT_X_L_REG				0x28
-#define		DEVICE_OUT_X_H_REG				0x29
-#define		DEVICE_OUT_Y_L_REG				0x2A
-#define		DEVICE_OUT_Y_H_REG				0x2B
-#define		DEVICE_OUT_Z_L_REG				0x2C
-#define		DEVICE_OUT_Z_H_REG				0x2D
+#define		DEVICE_OUT_X_L_REG					0x28
+#define		DEVICE_OUT_X_H_REG					0x29
+#define		DEVICE_OUT_Y_L_REG					0x2A
+#define		DEVICE_OUT_Y_H_REG					0x2B
+#define		DEVICE_OUT_Z_L_REG					0x2C
+#define		DEVICE_OUT_Z_H_REG					0x2D
 I2C_HandleTypeDef *_hi2c_config;
 enum deviceOperationMode
 {
@@ -67,23 +67,19 @@ uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readStatusRegister(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readReference(void);
 
-//mode operation
-void setDeviceMode(enum deviceOperationMode _setDeviceMode,
+//mode Operation
+uint8_t setDeviceMode(enum deviceOperationMode _setDeviceMode,
 					I2C_HandleTypeDef *_hi2c_config);
-void setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config);
-void setDeviceIntoModeSleep(void);
-void setDeviceIntoModeShutdown(void);
-void setWatermarkLevel(uint8_t _levelInput);
+uint8_t setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config);
+uint8_t setDeviceIntoModeSleep(I2C_HandleTypeDef *_hi2c_config);
+uint8_t setDeviceIntoModeShutdown(I2C_HandleTypeDef *_hi2c_config);
+uint8_t setWatermarkLevel(I2C_HandleTypeDef *_hi2c_config,
+					uint8_t _levelInput);
 
 //buffer controlling
-void setFIFOEnable(I2C_HandleTypeDef *_hi2c_config);
-void setBuffferMode(enum bufferOperationMode _setBufferMode,
+uint8_t setFIFOEnable(I2C_HandleTypeDef *_hi2c_config);
+uint8_t setBuffferMode(enum bufferOperationMode _setBufferMode,
 					I2C_HandleTypeDef *_hi2c_config);
-void setBufferModeBypass(void);
-void setBufferModeFifo(void);
-void setBufferModeStream(void);
-void setBufferModeBypass_2_Stream(void);
-void setBufferModeStream_2_Fifo(void);
 uint8_t readFifoControlReg(void);
 uint8_t readFifoSourceReg(void);
 uint8_t isFIFOstoreFull(I2C_HandleTypeDef *_hi2c_config);

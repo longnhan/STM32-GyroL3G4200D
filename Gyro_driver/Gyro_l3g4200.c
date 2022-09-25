@@ -48,27 +48,51 @@ uint8_t readControlRegister1(I2C_HandleTypeDef *_hi2c_config)
 }
 uint8_t readControlRegister2(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1]={};
-	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_2, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
-	return _pData[0];
+	uint8_t _pData= 0;
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_CTRL_REG_2,
+			I2C_MEMADD_SIZE_8BIT,
+			&_pData,
+			1,
+			0xFF);
+	return _pData;
 }
 uint8_t readControlRegister3(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1]={};
-	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_3, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
-	return _pData[0];
+	uint8_t _pData= 0;
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_CTRL_REG_3,
+			I2C_MEMADD_SIZE_8BIT,
+			&_pData,
+			1,
+			0xFF);
+	return _pData;
 }
 uint8_t readControlRegister4(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1]={};
-	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_4, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
-	return _pData[0];
+	uint8_t _pData= 0;
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_CTRL_REG_4,
+			I2C_MEMADD_SIZE_8BIT,
+			&_pData,
+			1,
+			0xFF);
+	return _pData;
 }
 uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData[1]={};
-	HAL_I2C_Mem_Read(_hi2c_config, DEVICE_I2C_ADR, DEVICE_CTRL_REG_5, I2C_MEMADD_SIZE_8BIT, _pData, 1, 0xFF);
-	return _pData[0];
+	uint8_t _pData= 0;
+	HAL_I2C_Mem_Read(_hi2c_config,
+			DEVICE_I2C_ADR,
+			DEVICE_CTRL_REG_5,
+			I2C_MEMADD_SIZE_8BIT,
+			&_pData,
+			1,
+			0xFF);
+	return _pData;
 }
 
 /**
@@ -87,7 +111,8 @@ uint8_t readStatusRegister(I2C_HandleTypeDef *_hi2c_config)
 	return _pData[0];
 }
 
-void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_hi2c_config)
+uint8_t setDeviceMode(enum deviceOperationMode _setDeviceMode,
+					I2C_HandleTypeDef *_hi2c_config)
 {
 	uint8_t readCtrlReg1=readControlRegister1(_hi2c_config);
 	uint8_t sendCtrlReg1=0;
@@ -127,15 +152,16 @@ void setDeviceMode(enum deviceOperationMode _setDeviceMode, I2C_HandleTypeDef *_
 						1,
 						0xFF);
 		//at least device needed 250ms to change from shutdown to normal mode
-		//fucntion here to wait for device get into normal mode
-		HAL_Delay(300);
-
 	}
+	//return CTRL_REG_1 after changing mode
+	readCtrlReg1=readControlRegister1(_hi2c_config);
+	return readCtrlReg1;
 }
 
-void setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config)
+uint8_t setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t _pData=0x0F;
+	uint8_t readCtrlReg1= 0;
+	uint8_t _pData= 0x0F;
 	HAL_I2C_Mem_Write(_hi2c_config,
 						DEVICE_I2C_ADR,
 						DEVICE_CTRL_REG_1,
@@ -143,31 +169,77 @@ void setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config)
 						&_pData,
 						1,
 						0xFF);
-	HAL_Delay(300);
+	//return CTRL_REG_1 after changing mode
+	readCtrlReg1=readControlRegister1(_hi2c_config);
+	return readCtrlReg1;
 }
 
-void setDeviceIntoModeSleep(void);
-void setDeviceIntoModeShutdown(void);
-void setWatermarkLevel(uint8_t _levelInput);
+uint8_t setDeviceIntoModeSleep(I2C_HandleTypeDef *_hi2c_config)
+{
+	uint8_t readCtrlReg1= readControlRegister1(_hi2c_config);
+	uint8_t _pData= readCtrlReg1 & 0xF8; //0b11111000
+	HAL_I2C_Mem_Write(_hi2c_config,
+						DEVICE_I2C_ADR,
+						DEVICE_CTRL_REG_1,
+						I2C_MEMADD_SIZE_8BIT,
+						&_pData,
+						1,
+						0xFF);
+	//return CTRL_REG_1 after changing mode
+	readCtrlReg1=readControlRegister1(_hi2c_config);
+	return readCtrlReg1;
+}
+uint8_t setDeviceIntoModeShutdown(I2C_HandleTypeDef *_hi2c_config)
+{
+	uint8_t readCtrlReg1= readControlRegister1(_hi2c_config);
+	uint8_t _pData= readCtrlReg1 & 0xF0; //0b11110000
+	HAL_I2C_Mem_Write(_hi2c_config,
+						DEVICE_I2C_ADR,
+						DEVICE_CTRL_REG_1,
+						I2C_MEMADD_SIZE_8BIT,
+						&_pData,
+						1,
+						0xFF);
+	//return CTRL_REG_1 after changing mode
+	readCtrlReg1=readControlRegister1(_hi2c_config);
+	return readCtrlReg1;
+}
+uint8_t setWatermarkLevel(I2C_HandleTypeDef *_hi2c_config, uint8_t _levelInput)
+{
+	uint8_t _readFifoCtrlReg = readRegister(_hi2c_config, DEVICE_FIFO_CTRL_REG);
+	uint8_t _pData = (_readFifoCtrlReg & 0b11100000) | _levelInput;
+	HAL_I2C_Mem_Write(_hi2c_config,
+							DEVICE_I2C_ADR,
+							DEVICE_CTRL_REG_1,
+							I2C_MEMADD_SIZE_8BIT,
+							&_pData,
+							1,
+							0xFF);
+	_readFifoCtrlReg = readRegister(_hi2c_config, DEVICE_FIFO_CTRL_REG);
+	return _readFifoCtrlReg;
+}
 
 //buffer controlling
-void setFIFOEnable(I2C_HandleTypeDef *_hi2c_config)
+uint8_t setFIFOEnable(I2C_HandleTypeDef *_hi2c_config)
 {
-	uint8_t readCtrlReg5 = readControlRegister5(_hi2c_config);
-	uint8_t sendCtrlReg5 = readCtrlReg5 | 0x40;
+	uint8_t _readCtrlReg5 = readControlRegister5(_hi2c_config);
+	uint8_t _sendCtrlReg5 = _readCtrlReg5 | 0x40;
 	HAL_I2C_Mem_Write(_hi2c_config,
 					DEVICE_I2C_ADR,
 					DEVICE_CTRL_REG_5,
 					I2C_MEMADD_SIZE_8BIT,
-					&sendCtrlReg5,
+					&_sendCtrlReg5,
 					1,
 					0xFF);
+	_readCtrlReg5 = readControlRegister5(_hi2c_config);
+	return _readCtrlReg5;
 }
 
-void setBuffferMode(enum bufferOperationMode _setBufferMode,
+uint8_t setBuffferMode(enum bufferOperationMode _setBufferMode,
 					I2C_HandleTypeDef *_hi2c_config)
 {
 	uint8_t _setMode=0;
+	uint8_t _readFifoCtrlReg=0;
 	switch (_setBufferMode)
 	{
 	case Buffer_Mode_Bypass:
@@ -193,26 +265,8 @@ void setBuffferMode(enum bufferOperationMode _setBufferMode,
 					&_setMode,
 					1,
 					0xFF);
-}
-void setBufferModeBypass(void)
-{
-
-}
-void setBufferModeFifo(void)
-{
-
-}
-void setBufferModeStream(void)
-{
-
-}
-void setBufferModeBypass_2_Stream(void)
-{
-
-}
-void setBufferModeStream_2_Fifo(void)
-{
-
+	_readFifoCtrlReg = readRegister(_hi2c_config, DEVICE_FIFO_CTRL_REG);
+	return _readFifoCtrlReg;
 }
 
 uint8_t isFIFOstoreFull(I2C_HandleTypeDef *_hi2c_config)

@@ -105,7 +105,9 @@ int main(void)
   //choose buffer mode from enum
   enum bufferOperationMode setBufferMode = Buffer_Mode_Bypass;
   //set device mode
-  setDeviceMode(setDeviceIntoMode, &hi2c1);
+//  setDeviceMode(setDeviceIntoMode, &hi2c1);
+  setDeviceIntoNormal(&hi2c1);
+  HAL_Delay(300);
   //set buffer mode
   setBuffferMode(setBufferMode, &hi2c1);
   //enable buffer
