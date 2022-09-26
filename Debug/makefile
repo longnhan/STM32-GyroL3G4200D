@@ -9,10 +9,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/subdir.mk
--include Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0/subdir.mk
--include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/subdir.mk
--include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
 -include Gyro_driver/subdir.mk
 -include Drivers/STM32G0xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
@@ -66,7 +62,7 @@ main-build: Gyro_L3G4200D.elf secondary-outputs
 
 # Tool invocations
 Gyro_L3G4200D.elf: $(OBJS) $(USER_OBJS) D:\STM_PROJECTS\NUCLEO-G070RB\Gyro_L3G4200D\STM32G070RBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Gyro_L3G4200D.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"D:\STM_PROJECTS\NUCLEO-G070RB\Gyro_L3G4200D\STM32G070RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Gyro_L3G4200D.map" -Wl,--gc-sections -static -L"D:\STM_PROJECTS\NUCLEO-G070RB\Gyro_L3G4200D\Gyro_driver" --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "Gyro_L3G4200D.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"D:\STM_PROJECTS\NUCLEO-G070RB\Gyro_L3G4200D\STM32G070RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Gyro_L3G4200D.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

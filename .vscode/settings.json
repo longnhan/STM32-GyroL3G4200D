@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "gyro_l3g4200.h": "c",
+        "main.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
