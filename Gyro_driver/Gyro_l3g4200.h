@@ -2,11 +2,11 @@
  *
  *
  */
-#include "main.h"
-#include "stm32g0xx_hal.h"
-//#include "stm32g0xx_hal_i2c.h"
 #ifndef __GYRO_L3G4200_H__
 #define __GYRO_L3G4200_H__
+
+#include "main.h"
+#include "stm32g0xx_hal.h"
 
 #define DEVICE_I2C_ADR							0xD2
 

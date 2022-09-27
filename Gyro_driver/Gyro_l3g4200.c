@@ -1,4 +1,5 @@
 #include "Gyro_l3g4200.h"
+
 /**
  * @brief read default name 0b11010011 from register 0x0F
  * @param _hi2c_config is a pointer received hi2cx configuration
