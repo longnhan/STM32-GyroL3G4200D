@@ -317,19 +317,27 @@ uint8_t setDeviceIntoModeShutdown(I2C_HandleTypeDef *_hi2c_config)
  * @param _hi2c_config is a pointer received hi2cx configuration
  * @param _levelInput is the watermark 5 bits level will be set
  * @return value of FIFO_CONTROL_REGISTER which contains set watermark 
+ * also return ZERO if input is out of the range
  */
 uint8_t setWatermarkLevel(I2C_HandleTypeDef *_hi2c_config, uint8_t _levelInput)
 {
 	uint8_t _readFifoCtrlReg = readRegister(_hi2c_config, DEVICE_FIFO_CTRL_REG);
 	uint8_t _pData = (_readFifoCtrlReg & 0b11100000) | _levelInput;
-	HAL_I2C_Mem_Write(_hi2c_config,
-							DEVICE_I2C_ADR,
-							DEVICE_CTRL_REG_1,
-							I2C_MEMADD_SIZE_8BIT,
-							&_pData,
-							1,
-							0xFF);
-	_readFifoCtrlReg = readRegister(_hi2c_config, DEVICE_FIFO_CTRL_REG);
+	if((_levelInput < 31) || (_levelInput ==31))
+	{
+		HAL_I2C_Mem_Write(_hi2c_config,
+								DEVICE_I2C_ADR,
+								DEVICE_CTRL_REG_1,
+								I2C_MEMADD_SIZE_8BIT,
+								&_pData,
+								1,
+								0xFF);
+		_readFifoCtrlReg = readRegister(_hi2c_config, DEVICE_FIFO_CTRL_REG);
+	}
+	else
+	{
+		_readFifoCtrlReg = 0x00;
+	}
 	return _readFifoCtrlReg;
 }
 
@@ -455,7 +463,7 @@ int16_t readRollValue(I2C_HandleTypeDef *_hi2c_config)
 	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x2) >> 1;
 	// check when overrun occurs
 	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x20) >>5;
-	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
+	if((_bitDataAvailable == 1) && (_bitDataOverrun == 1))
 	{
 		_upperData = readRegister(_hi2c_config, DEVICE_OUT_Y_H_REG);
 		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_Y_L_REG);
@@ -482,7 +490,7 @@ int16_t readPitchValue(I2C_HandleTypeDef *_hi2c_config)
 	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x1);
 	// check when overrun occurs
 	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x10) >>4;
-	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
+	if((_bitDataAvailable == 1) && (_bitDataOverrun == 1))
 	{
 		_upperData = readRegister(_hi2c_config, DEVICE_OUT_X_H_REG);
 		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_X_L_REG);
@@ -509,7 +517,7 @@ int16_t readYawValue(I2C_HandleTypeDef *_hi2c_config)
 	_bitDataAvailable = (readStatusRegister(_hi2c_config) & 0x4)>>2;
 	// check when overrun occurs
 	_bitDataOverrun = (readStatusRegister(_hi2c_config) & 0x40) >>6;
-	if(_bitDataAvailable == 1 && _bitDataOverrun == 1)
+	if((_bitDataAvailable == 1) && (_bitDataOverrun == 1))
 	{
 		_upperData = readRegister(_hi2c_config, DEVICE_OUT_Z_H_REG);
 		_lowerData = readRegister(_hi2c_config, DEVICE_OUT_Z_L_REG);

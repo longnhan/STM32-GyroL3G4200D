@@ -11,8 +11,7 @@
 #define DEVICE_I2C_ADR							0xD2
 
 #define DEVICE_NAME								0x0F
-#define DEVICE_MODE_SHUTDOWN 					0x00
-#define DEVICE_MODE_SLEEP						0x00
+
 //read and write registers
 #define DEVICE_CTRL_REG_1						0x20
 #define DEVICE_CTRL_REG_2						0x21
@@ -22,10 +21,10 @@
 #define	DEVICE_REFERENCE						0x25
 #define DEVICE_OUT_TEMP							0x26
 #define DEVICE_STATUS_REG						0x27
-//FIFO register configuration
+
 #define 	DEVICE_FIFO_CTRL_REG				0x2E
 #define		DEVICE_FIFO_SRC_REG					0x2F
-
+//FIFO setup mode
 #define 	DEVICE_FIFO_MODE_BYPASS				0b0001111
 #define 	DEVICE_FIFO_MODE_FF					0x0011111
 #define 	DEVICE_FIFO_MODE_STREAM				0x0101111

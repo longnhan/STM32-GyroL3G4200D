@@ -100,6 +100,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  //test only
   //choose device mode from enum
   enum deviceOperationMode setDeviceIntoMode = Device_Mode_Normal;
   //choose buffer mode from enum
@@ -115,6 +116,7 @@ int main(void)
 
   while (1)
   {
+	  //test only
 	  bufferData[0]=readDeviceName(&hi2c1);
 	  HAL_Delay(10);
 	  bufferData[1]=readControlRegister1(&hi2c1);
