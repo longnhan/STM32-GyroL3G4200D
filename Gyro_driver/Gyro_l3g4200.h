@@ -2,11 +2,11 @@
  *
  *
  */
-#include "main.h"
-#include "stm32g0xx_hal.h"
-//#include "stm32g0xx_hal_i2c.h"
 #ifndef __GYRO_L3G4200_H__
 #define __GYRO_L3G4200_H__
+
+#include "main.h"
+#include "stm32g0xx_hal.h"
 
 #define DEVICE_I2C_ADR							0xD2
 
@@ -67,7 +67,7 @@ uint8_t readControlRegister5(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readStatusRegister(I2C_HandleTypeDef *_hi2c_config);
 uint8_t readReference(void);
 
-//mode Operation
+//mode Operating
 uint8_t setDeviceMode(enum deviceOperationMode _setDeviceMode,
 					I2C_HandleTypeDef *_hi2c_config);
 uint8_t setDeviceIntoNormal(I2C_HandleTypeDef *_hi2c_config);
